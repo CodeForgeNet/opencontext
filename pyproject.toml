@@ -34,6 +34,8 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "passlib>=1.7.4",
     "fastmcp>=0.5.0",
+    "typer>=0.12.0",
+    "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]
@@ -51,9 +53,12 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/karan/pcsl"
-Repository = "https://github.com/karan/pcsl"
-Issues = "https://github.com/karan/pcsl/issues"
+Homepage = "https://github.com/CodeForgeNet/opencontext"
+Repository = "https://github.com/CodeForgeNet/opencontext"
+Issues = "https://github.com/CodeForgeNet/opencontext/issues"
+
+[project.scripts]
+pcsl = "pcsl.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["."]

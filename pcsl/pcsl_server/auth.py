@@ -5,9 +5,11 @@ from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load from ~/.pcsl/.env (created by pcsl init)
+load_dotenv(dotenv_path=Path.home() / ".pcsl" / ".env", override=True)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret_for_dev_only")
 ALGORITHM = "HS256"

@@ -6,37 +6,119 @@
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.9+-yellow" alt="Python"></a>
 </p>
 
-PCSL (Personal Context Sovereignty Layer) is an open protocol that allows users to own, store, and selectively share personal context with AI systems. Instead of re-explaining your background, preferences, and goals to every AI tool you use, PCSL lets you maintain a personal context that AI applications can request access to—with your permission.
+PCSL (Personal Context Sovereignty Layer) is an open protocol that lets you own your AI context and share it selectively with any AI tool — instead of re-explaining yourself every time.
 
-**Without PCSL:** You explain your background to every AI tool from scratch.  
-**With PCSL:** You deploy once, share your server URL, any AI tool instantly knows you.
+**Without PCSL:** Paste your background into every new AI session.  
+**With PCSL:** One local server. Every AI tool instantly knows you.
 
-## Core Principles
+## 30-Second Demo
 
-- **User Ownership**: Your context lives on your infrastructure, not in some third-party database
-- **Scoped Access**: AI apps get only what they need (e.g., `preferences`, `skills`)
-- **Auditable**: Every access is logged and transparent to you
-- **Portable**: Any AI system can integrate with standard REST endpoints
-- **Offline-first**: Works without a mandatory cloud server
+```bash
+pip install pcsl
+pcsl init
+pcsl server start
+pcsl context show
+```
 
-## Features
+That's it. Your personal context is now running as a local API at `http://localhost:8000`. Any AI tool can request scoped access to it.
 
-- **RESTful API Server** - FastAPI-based server with JWT authentication
-- **Scoped Token Authorization** - Fine-grained access control to specific context namespaces
-- **Semantic Context Retrieval** - AI-powered context chunking to return only relevant information
-- **Python SDK** - Easy integration for Python developers (`pip install pcsl-sdk`)
-- **JavaScript/TypeScript SDK** - For web and Node.js applications
-- **Browser Extension** - Inject your context into Claude.ai and ChatGPT automatically
-- **MCP Server** - Model Context Protocol server for AI tool integration
-- **Docker Support** - Easy deployment with Docker Compose
+## What You Get
 
-## Deploy Your Own PCSL Server
+- `pcsl context show` — view your full context
+- `pcsl context set identity name "Your Name"` — update any field
+- `pcsl context get skills` — fetch scope-filtered context via JWT auth
+- `pcsl token create my-tool identity,skills` — mint a scoped token for any app
+- `pcsl token revoke my-tool` — cut off access instantly
+- `pcsl audit` — see exactly who accessed what and when
 
-Each person runs their own PCSL instance. Your context lives on your infrastructure.
+## CLI Reference
 
-### One-Click Deploy (Railway)
+| Command | Description |
+|---------|-------------|
+| `pcsl init` | Bootstrap `~/.pcsl/` — creates context.json + generates SECRET_KEY |
+| `pcsl server start` | Start local API server on port 8000 (detached) |
+| `pcsl server stop` | Stop the server |
+| `pcsl server status` | Show PID, URL, version |
+| `pcsl context show` | Pretty-print your full context.json |
+| `pcsl context set <ns> <key> <val>` | Update a context field |
+| `pcsl context get <ns>` | Fetch scope-filtered context via API |
+| `pcsl token create <id> <scopes>` | Mint a scoped JWT for an external tool |
+| `pcsl token revoke <id>` | Revoke a client's access |
+| `pcsl audit` | View the full access log as a table |
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/karan/pcsl)
+## Your Context File
+
+After `pcsl init`, edit `~/.pcsl/context.json`:
+
+```json
+{
+  "pcsl_version": "1.0",
+  "identity": {
+    "name": "Your Name",
+    "profession": "Your Role",
+    "location": "City, Country"
+  },
+  "preferences": {
+    "communication_style": "direct, no fluff",
+    "tone": "professional"
+  },
+  "skills": {
+    "languages": ["Python", "TypeScript"],
+    "domains": ["RAG systems", "LLM optimization"]
+  },
+  "goals": {
+    "short_term": ["ship X", "learn Y"],
+    "long_term": ["build Z"]
+  }
+}
+```
+
+Any AI tool you authorize gets only the namespaces you explicitly grant.
+
+## Integrate with Any AI Tool
+
+Any app that speaks HTTP can request your context.
+
+**Python (with SDK):**
+```python
+from pcsl_sdk import PCSLClient
+
+pcsl = PCSLClient(server_url="http://localhost:8000")
+token = pcsl.authorize(client_id="my-app", scopes=["preferences", "skills"])
+context = pcsl.get_context(token)
+system_prompt = pcsl.inject_into_prompt(token, "You are a helpful assistant.")
+```
+
+**Raw HTTP:**
+```bash
+# 1. Get a token
+TOKEN=$(curl -s -X POST http://localhost:8000/pcsl/authorize \
+  -H "Content-Type: application/json" \
+  -d '{"client_id":"curl-test","scopes":["identity","skills"]}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+# 2. Fetch your context
+curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/pcsl/context
+```
+
+## How It Works
+
+1. `pcsl init` creates `~/.pcsl/context.json` (your data) and a `SECRET_KEY` (your auth)
+2. `pcsl server start` runs a local FastAPI server — only accessible on your machine
+3. An AI tool calls `/pcsl/authorize` with a `client_id` and requested `scopes`
+4. The server returns a short-lived JWT scoped to exactly those namespaces
+5. The tool fetches `/pcsl/context` with the JWT — gets only what it asked for
+6. Every access is logged. You can revoke any client at any time.
+
+Your data never leaves your machine unless you choose to expose the server publicly.
+
+## Deploy to Cloud (Optional)
+
+By default PCSL runs locally. To make your context available to cloud-based AI tools:
+
+### Railway (One-Click)
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/CodeForgeNet/opencontext)
 
 After deploying:
 1. Set these environment variables in Railway dashboard:
@@ -46,112 +128,36 @@ After deploying:
 2. Add a Volume in Railway, mount at `/app/pcsl/pcsl_server/data` so your context persists across redeploys
 3. Edit your context via `POST /pcsl/update` or by updating `context.json` before deploy
 
-### Manual Deploy (Docker)
+### Docker
 
 ```bash
-git clone https://github.com/karan/pcsl.git
+git clone https://github.com/CodeForgeNet/opencontext.git
 cd pcsl
 cp .env.example .env
 # Fill in SECRET_KEY and PCSL_ENCRYPTION_KEY in .env
 docker-compose up -d
 ```
 
-Your server runs at `http://your-server-ip:8000`
-
-## Quick Start
-
-> **Note:** This section is for contributors and developers who want to run PCSL locally. If you just want to deploy and use PCSL, see **Deploy Your Own** above.
-
-### Prerequisites
-
-- Python 3.9+
-- Docker (optional, for containerized deployment)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/karan/pcsl.git
-cd pcsl
-
-# Install dependencies
-pip install -e .
-
-# Or with AI features (for semantic chunking)
-pip install -e ".[ai]"
-
-# Install the Python SDK (for integration examples)
-pip install -e pcsl/pcsl-sdk-python
-
-# Set up environment variables
-cp .env.example .env
-
-# Generate required keys (run these and copy the output to .env)
-python -c "import secrets; print(secrets.token_hex(32))"       # → SECRET_KEY
-python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"  # → PCSL_ENCRYPTION_KEY
-```
-
-### Running the Server
-
-```bash
-# Start the PCSL server
-uvicorn pcsl.pcsl_server.main:app --reload
-
-# Or with Docker
-docker-compose up -d
-```
-
-The server will start at `http://localhost:8000`
-
-### Using the SDK
-
-```python
-from pcsl_sdk import PCSLClient
-
-# Initialize with your PCSL server URL
-pcsl = PCSLClient(server_url="http://localhost:8000")
-
-# Authorize and fetch context
-token = pcsl.authorize(client_id="my-app", scopes=["preferences", "skills"])
-context = pcsl.get_context(token)
-
-# Inject into your system prompt
-system_prompt = pcsl.inject_into_prompt(token, "You are a helpful assistant.")
-```
-
-### Browser Extension
-
-To install the browser extension:
-
-1. Open Chrome → `chrome://extensions/` → Enable **Developer Mode**
-2. Click **Load unpacked** → select the `pcsl/pcsl-extension/` folder
-3. Click the extension icon → enter your PCSL server URL → Save
-
 ## Project Structure
 
 ```
 PCSL/
-├── context.json              # Sample user context
-├── pyproject.toml            # Python package configuration
-├── docker-compose.yml        # Docker deployment
-├── LICENSE                   # Apache 2.0 License
 ├── pcsl/
-│   ├── spec/                 # Protocol specifications
-│   │   ├── SPEC.md          # Protocol definition
-│   │   ├── SCHEMA.md        # JSON-LD schema
-│   │   └── SECURITY.md      # Security best practices
+│   ├── cli.py               # CLI entry point (pcsl command)
 │   ├── pcsl_server/         # FastAPI server
 │   │   ├── main.py          # API endpoints
 │   │   ├── auth.py          # JWT authentication
-│   │   └── data/            # User data storage
+│   │   └── data/            # User data storage (runtime)
+│   ├── chunker.py           # Semantic context chunking
+│   ├── mcp_server.py        # MCP protocol server
+│   ├── spec/                # Protocol specification
 │   ├── pcsl-sdk-python/     # Python SDK
 │   ├── pcsl-sdk-js/         # JavaScript SDK
 │   ├── pcsl-extension/      # Browser extension
-│   ├── pcsl-directory/      # User directory service
-│   ├── examples/            # Integration examples
-│   ├── chunker.py           # Semantic context chunking
-│   └── mcp_server.py        # MCP protocol server
-└── tests/                   # Test suite
+│   └── examples/           # Integration examples
+├── pyproject.toml           # Python package configuration
+├── docker-compose.yml       # Docker deployment
+└── LICENSE                  # Apache 2.0 License
 ```
 
 ## API Endpoints
@@ -179,11 +185,6 @@ Namespaces allow AI apps to request only the specific context they need. When au
 - `health` - Health-related data (sensitive, off by default)
 - `finances` - Financial context (sensitive, off by default)
 
-```python
-# Example: only request what your app needs
-token = pcsl.authorize(client_id="my-app", scopes=["skills", "preferences"])
-```
-
 ## Documentation
 
 - [Protocol Specification](pcsl/spec/SPEC.md)
@@ -197,7 +198,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 
 ## Known Issues
 
-- **content.js raw JSON injection**: The browser extension currently injects raw JSON blob into textarea elements instead of properly simulating keyboard input. This may cause issues with some AI chat interfaces. Track progress at: https://github.com/karan/pcsl/issues
+- **content.js raw JSON injection**: The browser extension currently injects raw JSON blob into textarea elements instead of properly simulating keyboard input. This may cause issues with some AI chat interfaces. Track progress at: https://github.com/CodeForgeNet/opencontext/issues
 
 ## License
 
@@ -205,4 +206,4 @@ Licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 ---
 
-Built by [Karan Singh](https://github.com/karan). PCSL v1.0 — Own your context.
+Built by [Karan Singh](https://github.com/CodeForgeNet). PCSL v1.0 — Own your context.

@@ -7,7 +7,7 @@ setup(
     install_requires=["requests>=2.28"],
     author="Karan Singh",
     description="Python SDK for the PCSL (Personal Context Sovereignty Layer) protocol",
-    url="https://github.com/karan/pcsl",
+    url="https://github.com/CodeForgeNet/opencontext",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",

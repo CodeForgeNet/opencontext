@@ -40,4 +40,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `goals` - Objectives (short and long term)
 - `decisions` - Decision log with reasoning
 
-[1.0.0]: https://github.com/CodeForgeNet/pcsl/releases/v1.0.0
+[1.0.0]: https://github.com/CodeForgeNet/opencontext/releases/v1.0.0

@@ -10,7 +10,7 @@ Please note that this project is released with a [Code of Conduct](CODE_OF_CONDU
 
 ### Reporting Bugs
 
-Before creating bug reports, please check the [issue tracker](https://github.com/karan/pcsl/issues) to see if the issue has already been reported. When creating a bug report, include:
+Before creating bug reports, please check the [issue tracker](https://github.com/CodeForgeNet/opencontext/issues) to see if the issue has already been reported. When creating a bug report, include:
 
 - A quick summary and background
 - Steps to reproduce
@@ -40,7 +40,7 @@ Feature requests are welcome! But please first check if there's already a propos
 
 ```bash
 # Clone your fork
-git clone https://github.com/CodeForgeNet/pcsl.git
+git clone https://github.com/CodeForgeNet/opencontext.git
 cd pcsl
 
 # Create a virtual environment

@@ -4,6 +4,7 @@ from typing import List, Optional
 import os
 import json
 from datetime import timedelta
+from pathlib import Path
 from cryptography.fernet import Fernet
 from pydantic import BaseModel
 
@@ -12,8 +13,17 @@ from pcsl.pcsl_server.auth import create_access_token, get_current_token_data
 
 app = FastAPI(title="PCSL Server (v1.0)")
 
+# PCSL home directory (set by pcsl init)
+PCSL_HOME = Path.home() / ".pcsl"
+DATA_DIR = PCSL_HOME / "data"
+
 # Path to the shared context file. 
 def get_user_context_path(user_id: str = "local-user"):
+    # Prefer ~/.pcsl/context.json (set by pcsl init)
+    home_ctx = PCSL_HOME / "context.json"
+    if home_ctx.exists():
+        return str(home_ctx)
+    # Fallback to old repo-relative path for backwards compat
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "data", "users", f"{user_id}.json"))
 
 def get_context(user_id: str = "local-user"):
@@ -43,9 +53,11 @@ def save_context(ctx, user_id: str = "local-user"):
 
 def log_access(user_id: str, client_id: str, scopes: list):
     from datetime import datetime
-    log_path = os.path.join(os.path.dirname(__file__), "data", "users", f"{user_id}_access_log.json")
+    # Use PCSL_HOME/data for audit logs
+    os.makedirs(DATA_DIR, exist_ok=True)
+    log_path = DATA_DIR / f"{user_id}_access_log.json"
     log = []
-    if os.path.exists(log_path):
+    if log_path.exists():
         try:
             with open(log_path, "r") as f:
                 log = json.load(f)
@@ -65,7 +77,9 @@ def log_access(user_id: str, client_id: str, scopes: list):
         json.dump(log, f, indent=2)
 
 def get_revocation_list_path(user_id: str) -> str:
-    return os.path.join(os.path.dirname(__file__), "data", "users", f"{user_id}_revoked.json")
+    # Use PCSL_HOME/data for revocation lists
+    os.makedirs(DATA_DIR, exist_ok=True)
+    return str(DATA_DIR / f"{user_id}_revoked.json")
 
 def is_token_revoked(user_id: str, client_id: str) -> bool:
     path = get_revocation_list_path(user_id)
@@ -181,7 +195,8 @@ def read_smart_context(query: str, token_data: dict = Depends(get_current_token_
 @app.get("/pcsl/audit")
 def get_audit_log(token_data: dict = Depends(get_current_token_data)):
     user_id = token_data["user_id"]
-    log_path = os.path.join(os.path.dirname(__file__), "data", "users", f"{user_id}_access_log.json")
+    # Use PCSL_HOME/data for audit logs
+    log_path = DATA_DIR / f"{user_id}_access_log.json"
     try:
         with open(log_path, "r") as f:
             return {"log": json.load(f)}
