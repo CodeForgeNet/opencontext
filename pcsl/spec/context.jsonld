@@ -1,0 +1,33 @@
+{
+  "@context": {
+    "pcsl": "https://pcsl.dev/schema/v1/",
+    "@vocab": "https://pcsl.dev/schema/v1/",
+    "identity": "pcsl:identity",
+    "preferences": "pcsl:preferences",
+    "skills": "pcsl:skills",
+    "projects": "pcsl:projects",
+    "goals": "pcsl:goals",
+    "decisions": "pcsl:decisions",
+    "pcsl_version": "pcsl:pcsl_version",
+    "last_updated": "pcsl:last_updated",
+    "name": "pcsl:name",
+    "profession": "pcsl:profession",
+    "location": "pcsl:location",
+    "education": "pcsl:education",
+    "communication_style": "pcsl:communication_style",
+    "explanation_depth": "pcsl:explanation_depth",
+    "language": "pcsl:language",
+    "tone": "pcsl:tone",
+    "id": "pcsl:id",
+    "status": "pcsl:status",
+    "stack": "pcsl:stack",
+    "goal": "pcsl:goal",
+    "type": "pcsl:type",
+    "domain": "pcsl:domain",
+    "short_term": "pcsl:short_term",
+    "long_term": "pcsl:long_term",
+    "date": "pcsl:date",
+    "context": "pcsl:context",
+    "reasoning": "pcsl:reasoning"
+  }
+}

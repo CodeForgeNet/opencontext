@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  pcsl_server:
+    build:
+      context: .
+      dockerfile: pcsl/pcsl_server/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./context.json:/app/context.json
+      - ./pcsl/pcsl_server/data:/app/data
+    env_file:
+      - .env
+    environment:
+      - PCSL_ENCRYPTION_KEY=${PCSL_ENCRYPTION_KEY}
+      - SECRET_KEY=${SECRET_KEY}

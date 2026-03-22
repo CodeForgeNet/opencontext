@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PCSL Extension</title>
+    <style>
+        body { width: 300px; padding: 15px; font-family: sans-serif; background: #1a1a1a; color: #fff; }
+        .status { padding: 8px; border-radius: 4px; margin-bottom: 10px; text-align: center; }
+        .online { background: #10b981; }
+        .offline { background: #ef4444; }
+        .config { margin-top: 20px; font-size: 0.9em; }
+        button { cursor: pointer; width: 100%; border: none; background: #3b82f6; color: #fff; padding: 10px; border-radius: 4px; transition: 0.3s; }
+        button:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <h3>PCSL Status</h3>
+    <div id="server-status" class="status offline">Checking Server...</div>
+    <hr/>
+    <div class="config">
+        <label>PCSL Server URL:</label>
+        <input id="server-url-input" type="text" placeholder="https://your-pcsl.railway.app" 
+               style="width:100%; padding:6px; margin:4px 0; background:#333; color:#fff; border:1px solid #555; border-radius:4px; box-sizing: border-box;"/>
+        <button id="save-url" style="padding:6px; font-size:0.9em;">Save URL</button>
+    </div>
+    <button id="check-connection">Refresh Status</button>
+    <div style="margin-top: 20px;">
+        <h4 style="margin-bottom: 5px;">Recent Access Logs</h4>
+        <div id="audit-log" style="font-size: 0.8em; color: #ccc; max-height: 150px; overflow-y: auto; background: #262626; padding: 5px; border-radius: 4px;">
+            No logs yet.
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

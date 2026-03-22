@@ -1,0 +1,11 @@
+venv/
+.env
+pcsl/.key
+pcsl/pcsl_server/data/
+*.enc
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+*.egg-info/
+.pytest_cache/
+.DS_Store

@@ -1,0 +1,10 @@
+{
+  "karan": {
+    "user_handle": "karan",
+    "server_url": "https://karan.pcsl.dev",
+    "public_scopes": [
+      "preferences",
+      "skills"
+    ]
+  }
+}

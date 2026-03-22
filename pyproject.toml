@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcsl"
+version = "1.0.0"
+description = "Personal Context Sovereignty Layer - Open protocol for users to own and share personal context with AI systems"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Karan Singh", email = "karan@pcsl.dev"}
+]
+keywords = ["ai", "personal-context", "pcsl", "llm", "prompt-engineering"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "python-jose[cryptography]>=3.3.0",
+    "cryptography>=41.0.0",
+    "anthropic>=0.18.0",
+    "openai>=1.0.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "passlib>=1.7.4",
+    "fastmcp>=0.5.0",
+]
+
+[project.optional-dependencies]
+ai = [
+    "sentence-transformers>=2.2.0",
+    "torch>=2.0.0",
+    "numpy>=1.24.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "pcsl-sdk @ ./pcsl/pcsl-sdk-python",
+]
+
+[project.urls]
+Homepage = "https://github.com/karan/pcsl"
+Repository = "https://github.com/karan/pcsl"
+Issues = "https://github.com/karan/pcsl/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pcsl*"]
+
+[tool.setuptools.package-data]
+pcsl = ["*.json", "*.md"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"

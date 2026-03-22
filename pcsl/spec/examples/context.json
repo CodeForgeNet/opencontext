@@ -1,0 +1,41 @@
+{
+  "pcsl_version": "1.0",
+  "last_updated": "2026-03-18",
+  "identity": {
+    "name": "Karan Singh",
+    "profession": "AI & Full Stack Engineer",
+    "location": "India",
+    "education": "MCA (pursuing), BCA completed"
+  },
+  "preferences": {
+    "communication_style": "direct, concise",
+    "explanation_depth": "technical with code examples",
+    "language": "English",
+    "tone": "professional"
+  },
+  "skills": {
+    "languages": ["Python", "JavaScript", "TypeScript", "Java"],
+    "frameworks": ["FastAPI", "React", "LangChain", "Node.js"],
+    "domains": ["RAG Systems", "Agentic Workflows", "Protocol Design"]
+  },
+  "projects": [
+    {
+      "id": "proj_001",
+      "name": "PCSL Protocol",
+      "status": "active",
+      "stack": ["Python", "FastAPI", "React"],
+      "goal": "Build an open standard for portable AI context"
+    },
+    {
+      "id": "proj_002",
+      "name": "OpenContext SDK",
+      "status": "active",
+      "type": "open source",
+      "domain": "AI infrastructure"
+    }
+  ],
+  "goals": {
+    "short_term": ["Finalize PCSL v1.0", "Publish SDKs to PyPI and npm"],
+    "long_term": ["Establish PCSL as the industry standard for personal AI context"]
+  }
+}

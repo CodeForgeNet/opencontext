@@ -1,0 +1,16 @@
+# requirements.txt
+fastapi
+uvicorn
+python-jose[cryptography]
+cryptography
+anthropic
+openai
+requests
+python-dotenv
+passlib
+fastmcp
+
+# Optional AI/Semantic Chunking (merged from requirements-ai.txt)
+sentence-transformers
+torch
+numpy
