@@ -5,7 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-03-22
+## [1.1.0] - 2026-03-23
+
+### Added
+- `pcsl` CLI with `init`, `server`, `context`, `token`, `audit` commands
+- `~/.pcsl/` local environment bootstrapping via `pcsl init`
+- Detached server management via `pcsl server start/stop/status`
+- Scope-filtered context retrieval via `pcsl context get`
+- JWT token minting and revocation via `pcsl token create/revoke`
+- Access audit log via `pcsl audit`
+
+### Changed
+- `auth.py` now loads `~/.pcsl/.env` instead of repo-local `.env`
+- `main.py` now writes audit logs and revocation lists to `~/.pcsl/data/`
+- `get_user_context_path()` now prefers `~/.pcsl/context.json`
+- README rewritten with CLI-first quickstart
+
+## [1.0.0] - 2026-03-22
 
 ### Added
 
@@ -28,16 +44,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User context storage with namespace-based organization
 - Access audit logging for transparency
 - Context update endpoint with scope validation
-- Smart context retrieval using semantic similarity
-- Discovery endpoint at `/.well-known/pcsl.json`
-
-### Namespaces
-
-- `identity` - Basic user information
-- `preferences` - AI interaction preferences
-- `skills` - Technical expertise
-- `projects` - Project details
-- `goals` - Objectives (short and long term)
-- `decisions` - Decision log with reasoning
-
-[1.0.0]: https://github.com/CodeForgeNet/opencontext/releases/v1.0.0

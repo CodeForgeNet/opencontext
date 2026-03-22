@@ -9,6 +9,8 @@ requests
 python-dotenv
 passlib
 fastmcp
+typer
+rich
 
 # Optional AI/Semantic Chunking (merged from requirements-ai.txt)
 sentence-transformers

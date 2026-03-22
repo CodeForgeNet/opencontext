@@ -540,7 +540,7 @@ def context_get(
     """
     Get context from server with filtering.
     
-    Mints a token with the requested scope and fetcles filtered
+    Mints a token with the requested scope and fetches filtered
     context from the server. Requires the server to be running.
     
     Example: pcsl context get identity

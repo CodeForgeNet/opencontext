@@ -1,11 +1,11 @@
 {
   "pcsl_version": "1.0",
-  "last_updated": "2026-03-22",
+  "last_updated": "2026-03-23",
   "identity": {
-    "name": "Alex Chen",
-    "profession": "Full Stack Engineer",
-    "location": "Remote",
-    "education": "B.Tech Computer Science"
+    "name": "Your Name",
+    "profession": "Your Role",
+    "location": "City, Country",
+    "education": "Your Degree"
   },
   "preferences": {
     "communication_style": "direct, no fluff",
@@ -14,28 +14,22 @@
     "tone": "professional but friendly"
   },
   "skills": {
-    "languages": ["Python", "TypeScript", "Java"],
-    "frameworks": ["FastAPI", "React", "LangChain"],
-    "domains": ["RAG systems", "LLM optimization", "AI-native SaaS"]
+    "languages": ["Python", "TypeScript"],
+    "frameworks": ["FastAPI", "React"],
+    "domains": ["RAG systems", "LLM optimization"]
   },
   "projects": [
     {
       "id": "proj_001",
-      "name": "PCSL Server",
+      "name": "Your Project",
       "status": "active",
       "stack": ["FastAPI", "Docker"],
-      "goal": "Personal context sovereignty protocol"
+      "goal": "Your project goal"
     }
   ],
   "goals": {
-    "short_term": ["ship PCSL v1.0", "write integration examples"],
-    "long_term": ["grow PCSL as an open standard", "build AI-native tools"]
+    "short_term": ["ship your first feature", "learn something new"],
+    "long_term": ["build something meaningful", "grow as a developer"]
   },
-  "decisions": [
-    {
-      "date": "2026-03",
-      "context": "Chose FastAPI over Flask",
-      "reasoning": "Native async support, automatic OpenAPI docs, Pydantic validation"
-    }
-  ]
+  "decisions": []
 }
