@@ -5,7 +5,7 @@ PCSL CLI - Personal Context Sovereignty Layer Command Line Interface
 Entry point for all PCSL commands. Provides:
 - pcsl init: Initialize PCSL environment
 - pcsl server: Start/stop/status of the PCSL server
-- pcsl context: Show/set/get context values
+- pcsl context: Show/set/get/edit context values
 - pcsl token: Create/revoke access tokens
 - pcsl audit: View access logs
 - pcsl status: Quick server status check
@@ -134,7 +134,7 @@ app = typer.Typer(
 )
 
 server_app = typer.Typer(help="Manage PCSL server (start/stop/status)")
-context_app = typer.Typer(help="Manage PCSL context (show/set/get)")
+context_app = typer.Typer(help="Manage PCSL context (show/set/get/edit)")
 token_app = typer.Typer(help="Manage access tokens (create/revoke)")
 
 app.add_typer(server_app, name="server")
@@ -539,15 +539,15 @@ def context_get(
 ):
     """
     Get context from server with filtering.
-    
+
     Mints a token with the requested scope and fetches filtered
     context from the server. Requires the server to be running.
-    
+
     Example: pcsl context get identity
     """
     _load_dotenv_from_pcsl_home()
     token = _get_local_token([namespace])
-    
+
     try:
         response = requests.get(
             f"{SERVER_URL}/pcsl/context",
@@ -558,14 +558,48 @@ def context_get(
             error_detail = response.json().get("detail", "Unknown error")
             rprint(f"[red]Error: {error_detail}[/red]")
             raise typer.Exit(code=1)
-        
+
         data = response.json()
         rprint(f"[bold]Context for scope '{namespace}':[/bold]")
         print_json(json.dumps(data.get("context", {}), indent=2))
-        
+
     except requests.ConnectionError:
         rprint(f"[red]Error: Cannot connect to PCSL server at {SERVER_URL}[/red]")
         raise typer.Exit(code=1)
+
+
+@context_app.command("edit")
+def context_edit():
+    """
+    Edit context.json in your default editor.
+
+    Opens ~/.pcsl/context.json in the editor specified by the $EDITOR
+    environment variable. Falls back to 'nano' if $EDITOR is not set.
+
+    Example: pcsl context edit
+    """
+    if not CONTEXT_FILE.exists():
+        rprint(f"[red]Error: Context file not found at {CONTEXT_FILE}[/red]")
+        rprint("[yellow]Run 'pcsl init' first to create it.[/yellow]")
+        raise typer.Exit(code=1)
+
+    # Get editor from environment variable, default to nano
+    editor = os.getenv("EDITOR", "nano")
+
+    try:
+        rprint(f"[cyan]Opening {CONTEXT_FILE} with {editor}...[/cyan]")
+        subprocess.run([editor, str(CONTEXT_FILE)], check=True)
+        rprint("[green]Context file saved.[/green]")
+    except FileNotFoundError:
+        rprint(f"[red]Error: Editor '{editor}' not found.[/red]")
+        rprint("[yellow]Set the $EDITOR environment variable or install an editor (nano, vim, etc).[/yellow]")
+        raise typer.Exit(code=1)
+    except subprocess.CalledProcessError:
+        rprint("[yellow]Editor exited with an error.[/yellow]")
+        raise typer.Exit(code=1)
+    except KeyboardInterrupt:
+        rprint("[yellow]Cancelled.[/yellow]")
+        raise typer.Exit(code=0)
 
 
 # =============================================================================
