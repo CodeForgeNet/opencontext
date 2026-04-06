@@ -9,3 +9,4 @@ pcsl/pcsl_server/data/
 *.egg-info/
 .pytest_cache/
 .DS_Store
+.code-review-graphignore
