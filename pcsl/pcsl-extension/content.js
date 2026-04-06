@@ -66,12 +66,44 @@ const observer = new MutationObserver((mutations) => {
              }, (response) => {
                  if (response && response.context) {
                      const prefix = `[PCSL CONTEXT: ${JSON.stringify(response.context)}]\n\n`;
+
                      if (textarea.tagName === "TEXTAREA") {
                          textarea.value = prefix + textarea.value;
+
+                         // Dispatch InputEvent to notify React of state change
+                         const inputEvent = new InputEvent('input', {
+                             bubbles: true,
+                             cancelable: true,
+                             inputType: 'insertText'
+                         });
+                         textarea.dispatchEvent(inputEvent);
+
+                         // Dispatch change event for additional compatibility
+                         const changeEvent = new Event('change', { bubbles: true });
+                         textarea.dispatchEvent(changeEvent);
                      } else {
+                         // For contenteditable elements
                          textarea.innerText = prefix + textarea.innerText;
+
+                         // Trigger events for contenteditable
+                         const inputEvent = new InputEvent('input', {
+                             bubbles: true,
+                             cancelable: true,
+                             inputType: 'insertText'
+                         });
+                         textarea.dispatchEvent(inputEvent);
+
+                         const changeEvent = new Event('change', { bubbles: true });
+                         textarea.dispatchEvent(changeEvent);
+
+                         // Fallback: try execCommand for older browsers
+                         try {
+                             document.execCommand('insertText', false, prefix);
+                         } catch (e) {
+                             console.log("[PCSL] execCommand fallback not available");
+                         }
                      }
-                     console.log("[PCSL] Context injected.");
+                     console.log("[PCSL] Context injected with event dispatch.");
                  }
              });
         }, true);
