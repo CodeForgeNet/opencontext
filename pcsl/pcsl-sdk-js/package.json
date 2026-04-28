@@ -1,6 +1,6 @@
 {
   "name": "opencontext",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "JavaScript/TypeScript SDK for the OpenContext (PCSL) protocol",
   "main": "index.js",
   "scripts": {
