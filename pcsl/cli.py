@@ -35,7 +35,7 @@ from dotenv import load_dotenv
 
 # Constants
 PCSL_HOME = Path.home() / ".pcsl"
-SERVER_URL = "http://localhost:8000"
+SERVER_URL = os.getenv("PCSL_SERVER_URL", "http://localhost:8000")
 PID_FILE = PCSL_HOME / "server.pid"
 LOG_FILE = PCSL_HOME / "server.log"
 CONTEXT_FILE = PCSL_HOME / "context.json"
@@ -61,7 +61,8 @@ def _ensure_server_running() -> None:
     try:
         response = requests.get(f"{SERVER_URL}/", timeout=2)
         if response.status_code != 200:
-            raise typer.Exit("Server returned unexpected status", code=1)
+            rprint(f"[red]Error: Server returned unexpected status {response.status_code}[/red]")
+            raise typer.Exit(code=1)
     except requests.ConnectionError:
         rprint(f"[red]Error: PCSL server is not running. Run `pcsl server start` first.[/red]")
         raise typer.Exit(code=1)
@@ -320,8 +321,8 @@ def server_start():
     log_handle = open(LOG_FILE, "w")
     
     proc = subprocess.Popen(
-        [str(uvicorn_bin), "pcsl.pcsl_server.main:app", 
-         "--host", "0.0.0.0", "--port", "8000"],
+        [str(uvicorn_bin), "pcsl.pcsl_server.main:app",
+         "--host", "127.0.0.1", "--port", "8000"],
         stdout=subprocess.DEVNULL,
         stderr=log_handle,
         start_new_session=True,

@@ -55,7 +55,7 @@ class PCSLClient {
     const context = await this.getContext();
     const contextMsg = {
       role: "system",
-      content: `[USER CONTEXT]\n${JSON.stringify(context, null, 2)}\n[END CONTEXT]`
+      content: `<pcsl_context>\n${JSON.stringify(context, null, 2)}\n</pcsl_context>`
     };
     return [contextMsg, ...messages];
   }

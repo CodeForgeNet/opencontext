@@ -1,6 +1,8 @@
 import os
 import json
 import logging
+import tempfile
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from fastmcp import FastMCP
 from pydantic import Field
@@ -30,13 +32,15 @@ def load_user_context(user_id: str) -> Dict[str, Any]:
     with open(file_path, "r") as f:
         return json.load(f)
 
-def save_user_context(user_id: str, context: Dict[str, Any]):
+def save_user_context(user_id: str, context: Dict[str, Any]) -> None:
     file_path = get_user_file(user_id)
+    updated = {**context, "last_updated": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    from datetime import datetime
-    context["last_updated"] = datetime.now().strftime("%Y-%m-%d")
-    with open(file_path, "w") as f:
-        json.dump(context, f, indent=2)
+    dir_path = os.path.dirname(file_path) or "."
+    with tempfile.NamedTemporaryFile("w", dir=dir_path, delete=False, suffix=".tmp") as tmp:
+        json.dump(updated, tmp, indent=2)
+        tmp_path = tmp.name
+    os.replace(tmp_path, file_path)
 
 # --- Resources ---
 
@@ -101,9 +105,8 @@ def add_decision(
         if "decisions" not in ctx or not isinstance(ctx["decisions"], list):
             ctx["decisions"] = []
         
-        from datetime import datetime
         ctx["decisions"].append({
-            "date": datetime.now().strftime("%Y-%m"),
+            "date": datetime.now(timezone.utc).strftime("%Y-%m"),
             "context": context,
             "reasoning": reasoning
         })
